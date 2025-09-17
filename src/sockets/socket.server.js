@@ -43,43 +43,45 @@ function initSocketServer(httpServer) {
           });
         }
 
-        // 1️⃣ Save user message first
-        const userMessage = await messageModel.create({
-          chat: messagePayload.chat,
-          user: socket.user._id,
-          content: messagePayload.content,
-          role: "user",
-        });
 
-        const userVectors = await aiService.generateVector(userMessage.content);  
+    // Step 1: Create user message
+const userMessage = await messageModel.create({
+  chat: messagePayload.chat,
+  user: socket.user._id,
+  content: messagePayload.content,
+  role: "user",
+});
 
-        const memory=await queryMemory({
+// Step 2: Generate vector
+const userVectors = await aiService.generateVector(userMessage.content);
+
+// Step 3: Create memory
+await createMemory({
+  vectors: userVectors,
+  messageId: userMessage._id.toString(),
+  metadata: {
+    chat: messagePayload.chat,
+    user: socket.user._id,
+    text: messagePayload.content
+  }
+});
+
+
+        const [memory,chatHistory]=await Promise.all([
+          queryMemory({
             queryVector:userVectors,
             limit:3,
             metadata:{
               user:socket.user._id
             }
-        })
-        
-
-
-        await createMemory({
-          vectors: userVectors,
-          messageId: userMessage._id.toString(),
-          metadata: {
-            chat: messagePayload.chat,
-            user: socket.user._id,
-            text:messagePayload.content
-          },
-        });
-
-        const chatHistory = (
-          await messageModel
+            }),
+            messageModel
             .find({ chat: messagePayload.chat })
             .sort({ createdAt: -1 })
             .limit(20)
             .lean()
-        ).reverse();
+            .then(arr=>arr.reverse())
+        ])
 
         const messages = chatHistory.map((item) => ({
           role: item.role,
@@ -100,16 +102,20 @@ function initSocketServer(httpServer) {
 
         const aiResponse = await aiService.generateResponse([...ltm,...messages]);
 
-        // 6️⃣ Save AI response in DB
-        const responseMessage = await messageModel.create({
+        socket.emit("ai-response", {
+          content: aiResponse,
+          chat: messagePayload.chat,
+        });
+
+        const [responseMessage,responseVectors]=await Promise.all([
+          messageModel.create({
           chat: messagePayload.chat,
           user: socket.user._id,
           content: aiResponse,
           role: "model",
-        });
-
-
-        const responseVectors = await aiService.generateVector(aiResponse);
+        }),
+        aiService.generateVector(aiResponse)
+        ])
 
         await createMemory({
           vectors: responseVectors,
@@ -120,11 +126,7 @@ function initSocketServer(httpServer) {
             text:aiResponse
           },
         });
-
-        socket.emit("ai-response", {
-          content: aiResponse,
-          chat: messagePayload.chat,
-        });
+        
       } catch (err) {
         console.error("Socket error:", err);
 
