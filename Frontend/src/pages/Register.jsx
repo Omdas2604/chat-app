@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useTheme } from "../hooks/useTheme";
 import React, { useState } from "react";
 import axios from "axios";
+import ElectricBorder from "../components/ElectricBorder";
 
 const SunIcon = () => (
   <svg
@@ -64,23 +65,31 @@ const Register = () => {
   async function handleSubmit(e) {
     e.preventDefault();
     setSubmitting(true);
-    axios.post("http://localhost:3000/api/auth/register", {
-      email: form.email,
-      fullName: {
-        firstName: form.firstname,
-        lastName: form.lastname,
-      },
-      password: form.password,
-    },{
-        withCredentials:true
-    }).then((res)=>{
+    axios
+      .post(
+        "http://localhost:3000/api/auth/register",
+        {
+          email: form.email,
+          fullName: {
+            firstName: form.firstname,
+            lastName: form.lastname,
+          },
+          password: form.password,
+        },
+        {
+          withCredentials: true,
+        }
+      )
+      .then((res) => {
         console.log(res);
-        navigate('/login')
-    }).catch((err)=>{
-        console.error(err)
-  }).finally(()=>{
-    setSubmitting(false)
-  })
+        navigate("/login");
+      })
+      .catch((err) => {
+        console.error(err);
+      })
+      .finally(() => {
+        setSubmitting(false);
+      });
   }
 
   const colors = {
@@ -122,110 +131,119 @@ const Register = () => {
         {theme === "dark" ? <SunIcon /> : <MoonIcon />}
       </button>
 
-      <div
-        className={`w-full max-w-lg p-6 sm:p-8 md:p-12 space-y-6 sm:space-y-8 rounded-2xl shadow-2xl backdrop-blur-lg border ${currentTheme.panelBg} ${currentTheme.border} transition-colors duration-500`}
+      <ElectricBorder
+        color={theme === "dark" ? "#7df9ff" : "#4DCFD6"}
+        speed={2}
+        chaos={0.5}
+        thickness={1}
+        style={{ borderRadius: 16,width:500 }}
+        width={5}
       >
-        <div className="text-center">
-          <h1
-            className={`text-3xl sm:text-4xl font-bold tracking-tight ${currentTheme.text}`}
-          >
-            Create Account
-          </h1>
-          <p
-            className={`mt-2 sm:mt-3 text-sm sm:text-base ${currentTheme.textMuted}`}
-          >
-            Let's get you started.
+        <div
+          className={`w-full max-w-lg p-6 sm:p-8 md:p-12 space-y-6 sm:space-y-8 rounded-2xl shadow-2xl backdrop-blur-lg border ${currentTheme.panelBg} ${currentTheme.border} transition-colors duration-500`}
+        >
+          <div className="text-center">
+            <h1
+              className={`text-3xl sm:text-4xl font-bold tracking-tight ${currentTheme.text}`}
+            >
+              Create Account
+            </h1>
+            <p
+              className={`mt-2 sm:mt-3 text-sm sm:text-base ${currentTheme.textMuted}`}
+            >
+              Let's get you started.
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div>
+                <label
+                  htmlFor="firstname"
+                  className={`block text-sm font-medium mb-2 ${currentTheme.textMuted}`}
+                >
+                  First Name
+                </label>
+                <input
+                  type="text"
+                  id="firstname"
+                  name="firstname"
+                  onChange={handleChange}
+                  placeholder="John"
+                  className={`w-full p-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300 ${currentTheme.inputBg} ${currentTheme.border} ${currentTheme.text}`}
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="lastname"
+                  className={`block text-sm font-medium mb-2 ${currentTheme.textMuted}`}
+                >
+                  Last Name
+                </label>
+                <input
+                  type="text"
+                  id="lastname"
+                  name="lastname"
+                  placeholder="Doe"
+                  onChange={handleChange}
+                  className={`w-full p-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300 ${currentTheme.inputBg} ${currentTheme.border} ${currentTheme.text}`}
+                />
+              </div>
+            </div>
+            <div>
+              <label
+                htmlFor="email"
+                className={`block text-sm font-medium mb-2 ${currentTheme.textMuted}`}
+              >
+                Email Address
+              </label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="you@example.com"
+                onChange={handleChange}
+                className={`w-full p-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300 ${currentTheme.inputBg} ${currentTheme.border} ${currentTheme.text}`}
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="password"
+                className={`block text-sm font-medium mb-2 ${currentTheme.textMuted}`}
+              >
+                Password
+              </label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="••••••••"
+                onChange={handleChange}
+                className={`w-full p-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300 ${currentTheme.inputBg} ${currentTheme.border} ${currentTheme.text}`}
+              />
+            </div>
+            <div>
+              <button
+                type="submit"
+                className="w-full py-3 px-4 rounded-lg font-semibold text-white bg-indigo-600 hover:bg-[#4DCFD6]focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-300 shadow-lg hover:shadow-indigo-500/40"
+                disabled={submitting}
+              >
+                {submitting ? "Signing Up..." : "Sign Up"}
+              </button>
+            </div>
+          </form>
+
+          <p className={`text-center text-sm ${currentTheme.textMuted}`}>
+            Already have an account?{" "}
+            <a
+              href="#"
+              className={`font-semibold hover:underline ${currentTheme.accent}`}
+            >
+              Sign In
+            </a>
           </p>
         </div>
-
-        <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <div>
-              <label
-                htmlFor="firstname"
-                className={`block text-sm font-medium mb-2 ${currentTheme.textMuted}`}
-              >
-                First Name
-              </label>
-              <input
-                type="text"
-                id="firstname"
-                name="firstname"
-                onChange={handleChange}
-                placeholder="John"
-                className={`w-full p-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300 ${currentTheme.inputBg} ${currentTheme.border} ${currentTheme.text}`}
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="lastname"
-                className={`block text-sm font-medium mb-2 ${currentTheme.textMuted}`}
-              >
-                Last Name
-              </label>
-              <input
-                type="text"
-                id="lastname"
-                name="lastname"
-                placeholder="Doe"
-                onChange={handleChange}
-                className={`w-full p-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300 ${currentTheme.inputBg} ${currentTheme.border} ${currentTheme.text}`}
-              />
-            </div>
-          </div>
-          <div>
-            <label
-              htmlFor="email"
-              className={`block text-sm font-medium mb-2 ${currentTheme.textMuted}`}
-            >
-              Email Address
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              placeholder="you@example.com"
-              onChange={handleChange}
-              className={`w-full p-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300 ${currentTheme.inputBg} ${currentTheme.border} ${currentTheme.text}`}
-            />
-          </div>
-          <div>
-            <label
-              htmlFor="password"
-              className={`block text-sm font-medium mb-2 ${currentTheme.textMuted}`}
-            >
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              placeholder="••••••••"
-              onChange={handleChange}
-              className={`w-full p-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300 ${currentTheme.inputBg} ${currentTheme.border} ${currentTheme.text}`}
-            />
-          </div>
-          <div>
-            <button
-              type="submit"
-              className="w-full py-3 px-4 rounded-lg font-semibold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-300 shadow-lg hover:shadow-indigo-500/40"
-              disabled={submitting}
-            >
-              {submitting?'Signing Up...':'Sign Up'}
-            </button>
-          </div>
-        </form>
-
-        <p className={`text-center text-sm ${currentTheme.textMuted}`}>
-          Already have an account?{" "}
-          <a
-            href="#"
-            className={`font-semibold hover:underline ${currentTheme.accent}`}
-          >
-            Sign In
-          </a>
-        </p>
-      </div>
+      </ElectricBorder>
     </div>
   );
 };

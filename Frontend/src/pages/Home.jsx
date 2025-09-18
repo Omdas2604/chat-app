@@ -6,7 +6,13 @@ import { useTheme } from '../context/ThemeContext.jsx';
 const Logo = ({ theme }) => (
   <svg width="30" height="30" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
     <rect width="100" height="100" rx="20" fill={theme === 'dark' ? 'white' : 'black'} />
-    <path d="M30 70L50 30L70 70" stroke={theme === 'dark' ? 'black' : 'white'} strokeWidth="10" strokeLinecap="round" strokeLinejoin="round" />
+    <path
+      d="M25 35 H75 M25 65 H75 M40 50 L60 50"
+      stroke={theme === 'dark' ? 'black' : 'white'}
+      strokeWidth="8"
+      strokeLinecap="square"
+      strokeLinejoin="miter"
+    />
   </svg>
 );
 

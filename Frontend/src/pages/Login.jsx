@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useTheme } from "../context/ThemeContext";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import ElectricBorder from "../components/ElectricBorder";
 
 
 // --- ICONS ---
@@ -103,6 +104,8 @@ const Login = () => {
           </div>
 
            {/* Responsive card padding */}
+
+       <ElectricBorder color={theme==="dark"?"#7df9ff":"#4DCFD6"} speed={2} chaos={0.5} thickness={1} style={{ borderRadius: 16 }} >
           <div className={`p-8 sm:p-8 border rounded-xl ${currentTheme.border} ${theme === 'dark' ? 'bg-zinc-900/50' : 'bg-white'}`}>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
@@ -142,7 +145,7 @@ const Login = () => {
               </div>
               
               <div className="flex items-center justify-between flex-wrap">
-                <a href="#" className={`text-sm font-medium ${theme === 'dark' ? 'text-indigo-400 hover:text-indigo-300' : 'text-indigo-600 hover:text-indigo-500'}`}>
+                <a href="#" className={`text-sm font-medium ${theme === 'dark' ? 'text-white hover:text-[#7df9ff]' : 'text-black hover:text-[#4DCFD6]'}`}>
                   Forgot your password?
                 </a>
               </div>
@@ -158,6 +161,7 @@ const Login = () => {
               </div>
             </form>
           </div>
+      </ElectricBorder>
           
           <p className={`mt-5 text-center text-sm ${currentTheme.textMuted}`}>
             Don't have an account?{' '}
