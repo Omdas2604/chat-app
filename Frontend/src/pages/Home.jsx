@@ -1,143 +1,242 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useTheme } from '../context/ThemeContext.jsx';
 
-
 // --- ICONS ---
-const Logo = ({ theme }) => (
-  <svg width="30" height="30" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+const Logo = ({ theme, className }) => (
+  <svg width="30" height="30" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
     <rect width="100" height="100" rx="20" fill={theme === 'dark' ? 'white' : 'black'} />
-    <path
-      d="M25 35 H75 M25 65 H75 M40 50 L60 50"
-      stroke={theme === 'dark' ? 'black' : 'white'}
-      strokeWidth="8"
-      strokeLinecap="square"
-      strokeLinejoin="miter"
-    />
+    <path d="M25 35 H75 M25 65 H75 M40 50 L60 50" stroke={theme === 'dark' ? 'black' : 'white'} strokeWidth="8" strokeLinecap="square" strokeLinejoin="miter" />
   </svg>
 );
-
-const ArrowIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="transition-transform group-hover:translate-x-1">
-    <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
+const SendIcon = () => (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22 2L11 13M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
 );
-
 const SunIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
 );
-
 const MoonIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
 );
-
-const SparkleIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M12 2L14.09 8.26L20 9.27L15.55 13.97L16.91 20L12 16.61L7.09 20L8.45 13.97L4 9.27L9.91 8.26L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
+const UserIcon = ({ className }) => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}><path d="M20 21V19C20 16.7909 18.2091 15 16 15H8C5.79086 15 4 16.7909 4 19V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><path d="M12 11C14.2091 11 16 9.20914 16 7C16 4.79086 14.2091 3 12 3C9.79086 3 8 4.79086 8 7C8 9.20914 9.79086 11 12 11Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+);
+const MenuIcon = () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 12H21M3 6H21M3 18H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+);
+const PlusIcon = () => (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 5V19M5 12H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+);
+const LogoutIcon = () => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><path d="M16 17L21 12L16 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><path d="M21 12H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+);
+const CloseIcon = () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
 );
 
 
-// --- HOME COMPONENT ---
+// --- SUB-COMPONENTS ---
+
+const Header = ({ theme, toggleTheme, setIsSidebarOpen }) => (
+    <header className="flex-shrink-0 flex justify-between items-center p-4">
+        <div className="flex items-center gap-3">
+            <button onClick={() => setIsSidebarOpen(prev => !prev)} className="p-1">
+                <MenuIcon />
+            </button>
+            <span className="text-xl font-semibold tracking-tighter">Zenith</span>
+        </div>
+        <button onClick={toggleTheme} className={`p-2 rounded-full transition-colors ${theme === 'dark' ? 'hover:bg-zinc-800' : 'hover:bg-zinc-200'}`}>
+            {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
+        </button>
+    </header>
+);
+
+const Sidebar = ({ theme, currentTheme, chatHistory, startNewChat, isSidebarOpen, setIsSidebarOpen }) => (
+    <aside className={`absolute lg:fixed top-0 left-0 h-full w-72 flex-shrink-0 ${currentTheme.sidebarBg} border-r ${currentTheme.border} flex flex-col z-40 transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className={`flex items-center justify-between p-4 flex-shrink-0 border-b ${currentTheme.border}`}>
+            <span className="font-semibold">Chat History</span>
+            <button onClick={() => setIsSidebarOpen(false)} className="p-1 lg:hidden">
+                <CloseIcon />
+            </button>
+        </div>
+        <div className="p-4 flex-shrink-0">
+            <button onClick={startNewChat} className={`w-full flex items-center gap-2 justify-center p-2 rounded-lg text-sm font-medium border transition-colors ${currentTheme.border} ${theme === 'dark' ? 'hover:bg-zinc-800' : 'hover:bg-zinc-200'}`}>
+                <PlusIcon />
+                New Chat
+            </button>
+        </div>
+        <nav className="flex-1 px-4 pb-4 space-y-2 overflow-y-auto">
+            {chatHistory.map(chat => (
+                <a key={chat.id} href="#" className={`block p-2.5 rounded-lg text-sm truncate ${theme === 'dark' ? 'hover:bg-zinc-800' : 'hover:bg-zinc-200'}`}>
+                    {chat.title}
+                </a>
+            ))}
+        </nav>
+        <div className={`flex-shrink-0 p-4 border-t ${currentTheme.border}`}>
+            <a href="#" className={`flex items-center gap-3 p-2 rounded-lg transition-colors ${theme === 'dark' ? 'hover:bg-zinc-800' : 'hover:bg-zinc-200'}`}>
+                <UserIcon className="w-8 h-8 p-1.5 bg-zinc-700 text-white rounded-full"/>
+                <span className="font-medium text-sm">Your Name</span>
+                <LogoutIcon className="ml-auto"/>
+            </a>
+        </div>
+    </aside>
+);
+
+const ChatInterface = ({ messages, theme, currentTheme }) => {
+    const chatEndRef = useRef(null);
+    useEffect(() => {
+        chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [messages]);
+
+    return (
+        <div className="pt-8 pb-4 space-y-6">
+            {messages.map((msg, index) => (
+                <div key={index} className={`flex items-start gap-4 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+                    <div className={`flex-shrink-0 h-9 w-9 rounded-full flex items-center justify-center border ${currentTheme.border} ${currentTheme.panelBg} ${msg.sender === 'user' ? 'order-2' : 'order-1'}`}>
+                        {msg.sender === 'ai' ? <Logo theme={theme} /> : <UserIcon />}
+                    </div>
+                    <div className={`max-w-xl p-3.5 rounded-lg ${msg.sender === 'user' ? 'order-1 bg-indigo-600 text-white' : `order-2 ${currentTheme.panelBg} border ${currentTheme.border}`}`}>
+                        <p className="whitespace-pre-wrap text-sm leading-6">{msg.text}</p>
+                    </div>
+                </div>
+            ))}
+            <div ref={chatEndRef} />
+        </div>
+    );
+};
+
+const ChatInput = ({ inputValue, setInputValue, handlePromptSubmit, currentTheme, theme }) => (
+    <div className={`flex-shrink-0 bg-transparent`}>
+        <form onSubmit={handlePromptSubmit} className="max-w-4xl mx-auto p-4">
+            <div className={`relative border rounded-xl ${currentTheme.border} ${theme === 'dark' ? 'bg-zinc-950' : 'bg-white'}`}>
+                <textarea
+                    rows="1"
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                            e.preventDefault();
+                            handlePromptSubmit(e);
+                        }
+                    }}
+                    placeholder="Message Zenith..."
+                    className={`w-full pl-4 pr-16 py-3 text-sm resize-none bg-transparent focus:outline-none ${currentTheme.placeholder}`}
+                />
+                <button type="submit" aria-label="Submit prompt" disabled={!inputValue.trim()} className={`absolute right-3 top-1/2 -translate-y-1/2 h-8 w-8 flex items-center justify-center rounded-lg transition-colors duration-200 ${inputValue.trim() ? 'bg-indigo-600 text-white' : `${currentTheme.textMuted} bg-transparent cursor-not-allowed'}`}`}>
+                    <SendIcon />
+                </button>
+            </div>
+             <p className="text-center text-xs mt-3 text-zinc-500">Zenith can make mistakes. Consider checking important information.</p>
+        </form>
+    </div>
+);
+
+const LandingContent = ({ theme }) => (
+      <div className="h-full flex flex-col justify-center items-center text-center">
+        <Logo theme={theme} className="w-16 h-16 mb-4"/>
+        <h1 className="text-4xl font-medium">How can I help you today?</h1>
+      </div>
+);
+
+// --- HOME COMPONENT (Main Layout Manager) ---
 const Home = () => {
   const { theme, toggleTheme } = useTheme();
 
+  const [messages, setMessages] = useState([]);
+  const [inputValue, setInputValue] = useState('');
+  const [isChatActive, setIsChatActive] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [chatHistory, setChatHistory] = useState([
+      {id: 1, title: "React Button Component Code"},
+      {id: 2, title: "Trip to the Swiss Alps"}
+  ]);
+
   const colors = {
     light: {
-      bg: 'bg-white', text: 'text-zinc-900', textMuted: 'text-zinc-600', border: 'border-zinc-200',
-      panelBg: 'bg-white', btnText: 'text-white', btnBg: 'bg-black', btnHover: 'hover:bg-zinc-800',
-      placeholder: 'placeholder:text-zinc-400'
+      bg: 'bg-zinc-100', text: 'text-zinc-900', textMuted: 'text-zinc-500', border: 'border-zinc-200',
+      panelBg: 'bg-white', sidebarBg: 'bg-zinc-50', placeholder: 'placeholder:text-zinc-400',
     },
     dark: {
       bg: 'bg-black', text: 'text-gray-50', textMuted: 'text-zinc-400', border: 'border-zinc-800',
-      panelBg: 'bg-zinc-950', btnText: 'text-black', btnBg: 'bg-white', btnHover: 'hover:bg-zinc-200',
-      placeholder: 'placeholder:text-zinc-600'
+      panelBg: 'bg-zinc-900', sidebarBg: 'bg-zinc-950', placeholder: 'placeholder:text-zinc-600',
     }
   };
-
   const currentTheme = theme === 'dark' ? colors.dark : colors.light;
+
+  const handlePromptSubmit = (e) => {
+    if (e) e.preventDefault();
+    const text = inputValue.trim();
+    if (!text) return;
+
+    if (!isChatActive) {
+        setIsChatActive(true);
+        const newChat = { id: Date.now(), title: text.length > 30 ? text.substring(0, 30) + '...' : text };
+        setChatHistory(prev => [newChat, ...prev]);
+    }
+    
+    setMessages(prev => [...prev, { sender: 'user', text }]);
+    setInputValue('');
+    
+    setTimeout(() => {
+        setMessages(prev => [...prev, { sender: 'ai', text: `This is a simulated AI response for your query: "${text}". The possibilities are endless.` }]);
+    }, 1200);
+  };
   
-  const examplePrompts = [
-    { title: "Plan a trip", description: "to the Swiss Alps for a week." },
-    { title: "Write a short story", description: "about a robot that discovers music." },
-    { title: "Generate code", description: "for a React button component." },
-    { title: "Summarize an article", description: "on the latest AI advancements." },
-  ];
+  const startNewChat = () => {
+      setIsChatActive(false);
+      setMessages([]);
+      setInputValue('');
+      if (window.innerWidth < 1024) { // Close sidebar on mobile when starting new chat
+        setIsSidebarOpen(false);
+      }
+  }
 
   return (
-    <div className={`flex flex-col min-h-screen ${currentTheme.bg} ${currentTheme.text} font-sans antialiased transition-colors duration-500`}>
-      <div className="flex-grow max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        <header className={`flex justify-between items-center py-5 border-b ${currentTheme.border} transition-colors duration-500`}>
-          <div className="flex items-center gap-3">
-            <Logo theme={theme} />
-            <span className="text-xl font-semibold tracking-tighter">Zenith</span>
-          </div>
-          <nav className="flex items-center gap-2 sm:gap-4">
-            <button className={`px-4 sm:px-5 py-2 text-sm font-medium rounded-full transition-colors duration-300 ${currentTheme.btnBg} ${currentTheme.btnText} ${currentTheme.btnHover}`}>
-              Sign In
-            </button>
-            <button onClick={toggleTheme} className={`p-2 rounded-full transition-all duration-300 ${theme === 'dark' ? 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
-              <span className="sr-only">Toggle theme</span>
-              {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
-            </button>
-          </nav>
-        </header>
+    <div className={`relative h-screen w-full flex ${currentTheme.bg} ${currentTheme.text} font-sans antialiased overflow-hidden`}>
+        <Sidebar 
+            theme={theme}
+            currentTheme={currentTheme}
+            chatHistory={chatHistory}
+            startNewChat={startNewChat}
+            isSidebarOpen={isSidebarOpen}
+            setIsSidebarOpen={setIsSidebarOpen}
+        />
+        
+        {/* Overlay for closing sidebar on mobile */}
+        {isSidebarOpen && (
+            <div
+                onClick={() => setIsSidebarOpen(false)}
+                className="fixed inset-0 bg-black/60 z-30 lg:hidden"
+                aria-hidden="true"
+            ></div>
+        )}
 
-        <main>
-          <section className="relative flex flex-col items-center text-center pt-20 pb-16 md:pt-28 md:pb-24">
-            <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-64 ${theme === 'dark' ? 'bg-zinc-900' : 'bg-zinc-50'} rounded-full blur-3xl opacity-40 -z-10`}></div>
-            <h1 className={`text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter mb-6 bg-clip-text text-transparent ${theme === 'dark' ? 'bg-gradient-to-b from-zinc-50 to-zinc-400' : 'bg-gradient-to-b from-zinc-900 to-zinc-600'}py-2`}>
-                Converse with Intelligence
-            </h1>
-            <p className={`max-w-2xl text-lg md:text-xl ${currentTheme.textMuted} mb-10`}>
-              Your creative and analytical partner. Ask anything, or start with an example below.
-            </p>
+        <div className={`flex-1 flex flex-col h-screen transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'}`}>
+            <Header 
+                theme={theme}
+                toggleTheme={toggleTheme}
+                setIsSidebarOpen={setIsSidebarOpen}
+            />
 
-            <form className="w-full max-w-3xl px-4">
-              <div className="relative group">
-                <input
-                  type="text"
-                  placeholder="e.g., 'What are the key themes of Dune?'"
-                  className={`w-full pl-6 pr-16 py-4 text-base border rounded-full focus:outline-none focus:ring-2 transition-all duration-300 ${currentTheme.panelBg} ${currentTheme.border} ${currentTheme.placeholder} ${theme === 'dark' ? 'focus:ring-zinc-700' : 'focus:ring-zinc-300 focus:border-zinc-400'}`}
-                />
-                <button type="submit" aria-label="Submit prompt" className={`absolute right-2 top-1/2 -translate-y-1/2 h-11 w-11 flex items-center justify-center rounded-full transition-all duration-300 ${theme === 'dark' ? 'text-zinc-400 bg-zinc-800/80 group-hover:text-white group-hover:bg-zinc-700' : 'text-zinc-500 bg-zinc-100 group-hover:text-black group-hover:bg-zinc-200'}`}>
-                  <ArrowIcon />
-                </button>
-              </div>
-            </form>
-          </section>
+            <main className="flex-1 overflow-y-auto">
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
+                    {isChatActive ? (
+                        <ChatInterface messages={messages} theme={theme} currentTheme={currentTheme} />
+                    ) : (
+                        <LandingContent theme={theme} />
+                    )}
+                </div>
+            </main>
 
-          <section className="pb-24 md:pb-32">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold tracking-tight">Or try one of these</h2>
-              <p className={`${currentTheme.textMuted} mt-2`}>Get started with a single click.</p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {examplePrompts.map((item, index) => (
-                <button key={index} className={`group text-left p-6 border rounded-xl transition-all duration-300 ${currentTheme.border} ${theme === 'dark' ? 'hover:border-zinc-700 hover:bg-zinc-900' : 'hover:border-zinc-300 hover:bg-zinc-50'} transform hover:-translate-y-1`}>
-                  <div className="flex items-start gap-4">
-                    <div className={`flex-shrink-0 h-10 w-10 rounded-lg flex items-center justify-center border ${currentTheme.border} ${theme === 'dark' ? 'bg-zinc-900' : 'bg-white'}`}>
-                        <SparkleIcon />
-                    </div>
-                    <div>
-                        <p className={`font-semibold ${currentTheme.text}`}>{item.title}</p>
-                        <p className={`mt-1 text-sm ${currentTheme.textMuted}`}>{item.description}</p>
-                    </div>
-                  </div>
-                </button>
-              ))}
-            </div>
-          </section>
-        </main>
-      </div>
-      
-      <div className={`${currentTheme.bg} transition-colors duration-500`}>
-        <footer className={`max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-6 border-t ${currentTheme.border} ${currentTheme.textMuted} text-sm transition-colors duration-500`}>
-          <p>&copy; {new Date().getFullYear()} Zenith. All Rights Reserved.</p>
-        </footer>
-      </div>
+            <ChatInput 
+                inputValue={inputValue}
+                setInputValue={setInputValue}
+                handlePromptSubmit={handlePromptSubmit}
+                currentTheme={currentTheme}
+                theme={theme}
+            />
+        </div>
     </div>
   );
 };
 
 export default Home;
-
