@@ -6,7 +6,9 @@ const router=express.Router();
 
 router.post('/',authMiddleware.authUser,chatController.createChat)
 
+router.get('/',authMiddleware.authUser,chatController.getChats)
 
+router.get('/messages/:id',authMiddleware.authUser,chatController.getMessages)
 
 
 module.exports=router;

@@ -3,21 +3,28 @@ import { Logo, UserIcon } from "./Icons.jsx";
 
 const ChatInterface = ({ messages, theme, currentTheme }) => {
   const chatEndRef = useRef(null);
+
   useEffect(() => {
+    // Scroll to the bottom smoothly when new messages are added
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   return (
-    <div className="pt-8 pb-4 space-y-6">
-      {messages.map((msg, index) => (
+    <div className="pt-8 pb-4 space-y-8">
+      {messages.map((msg) => (
+        // IMPORTANT: Use a unique message ID for the key instead of index.
+        // This is crucial for performance and prevents rendering bugs.
+        // Ensure each message object you create has a unique `id`.
         <div
-          key={index}
-          className={`flex items-start gap-4 ${
+          key={msg.id}
+          // The 'animate-message-in' class applies our new animation
+          className={`flex items-start gap-4 animate-message-in ${
             msg.sender === "user" ? "justify-end" : "justify-start"
           }`}
         >
+          {/* Avatar */}
           <div
-            className={`flex-shrink-0 h-9 w-9 rounded-full flex items-center justify-center border ${
+            className={`flex-shrink-0 h-9 w-9 rounded-full flex items-center justify-center shadow-md border ${
               currentTheme.border
             } ${currentTheme.panelBg} ${
               msg.sender === "user" ? "order-2" : "order-1"
@@ -25,14 +32,22 @@ const ChatInterface = ({ messages, theme, currentTheme }) => {
           >
             {msg.sender === "ai" ? <Logo theme={theme} /> : <UserIcon />}
           </div>
+
+          {/* Chat Bubble */}
           <div
-            className={`max-w-xl p-3.5 rounded-lg ${
+            className={`max-w-xl p-4 rounded-2xl shadow-md ${
               msg.sender === "user"
-                ? "order-1 bg-indigo-600 text-white"
-                : `order-2 ${currentTheme.panelBg} border ${currentTheme.border}`
+                ? "order-1 bg-gradient-to-br from-blue-600 to-purple-600 text-white rounded-br-lg"
+                : `order-2 rounded-bl-lg border ${
+                    currentTheme.border
+                  } ${
+                    theme === "dark" ? "bg-zinc-800/50" : "bg-white"
+                  }`
             }`}
           >
-            <p className="whitespace-pre-wrap text-sm leading-6">{msg.text}</p>
+            <p className="whitespace-pre-wrap text-sm leading-relaxed">
+              {msg.text}
+            </p>
           </div>
         </div>
       ))}

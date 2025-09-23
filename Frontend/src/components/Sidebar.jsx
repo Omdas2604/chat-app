@@ -6,8 +6,10 @@ const Sidebar = ({
   currentTheme,
   chatHistory,
   onNewChatClick,
+  onSelectChat,
   isSidebarOpen,
   setIsSidebarOpen,
+  activeChatId,
 }) => (
   <aside
     className={`absolute lg:fixed top-0 left-0 h-full w-72 flex-shrink-0 ${
@@ -38,18 +40,28 @@ const Sidebar = ({
       </button>
     </div>
     <nav className="flex-1 px-4 pb-4 space-y-2 overflow-y-auto">
-      {chatHistory.map((chat) => (
-        <a
-          key={chat.id}
-          href="#"
-          className={`block p-2.5 rounded-lg text-sm truncate ${
-            theme === "dark" ? "hover:bg-zinc-800" : "hover:bg-zinc-200"
+      {chatHistory.map((chat) => {
+        const isActive = chat._id === activeChatId;
+        return (
+          <a
+            key={chat._id}
+            onClick={() => onSelectChat(chat)}
+            href="#"
+            className={`block p-2.5 rounded-lg text-sm truncate transition-colors
+          ${
+            isActive
+              ? "bg-indigo-600 text-white"
+              : theme === "dark"
+              ? "hover:bg-zinc-800 text-white"
+              : "hover:bg-zinc-200 text-zinc-900"
           }`}
-        >
-          {chat.title}
-        </a>
-      ))}
+          >
+            {chat.title}
+          </a>
+        );
+      })}
     </nav>
+
     <div className={`flex-shrink-0 p-4 border-t ${currentTheme.border}`}>
       <a
         href="#"
