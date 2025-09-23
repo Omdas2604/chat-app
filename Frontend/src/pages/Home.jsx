@@ -21,6 +21,7 @@ const Home = () => {
   const [chatHistory, setChatHistory] = useState([]);
   const [socket, setSocket] = useState(null);
   const [activeChatId, setActiveChatId] = useState(null);
+  const [isAiTyping, setIsAiTyping] = useState(false);
 
   // State for the modal
   const [isTitleModalOpen, setIsTitleModalOpen] = useState(false);
@@ -61,7 +62,8 @@ const Home = () => {
     if (!socket) return;
 
     const handleAIResponse = (messagePayload) => {
-      // Add a unique ID to each message for React keys
+      setIsAiTyping(false);
+
       const newMessage = {
         id: Date.now() + Math.random(), // Simple unique ID generation
         sender: "ai",
@@ -144,7 +146,7 @@ const Home = () => {
     };
     setMessages((prev) => [...prev, newMessage]);
     setInputValue("");
-
+    setIsAiTyping(true);
     socket.emit("ai-message", {
       chat: activeChatId,
       content: text,
@@ -231,12 +233,13 @@ const Home = () => {
           toggleTheme={toggleTheme}
           setIsSidebarOpen={setIsSidebarOpen}
         />
-        
+
         <main className="flex-1 overflow-y-auto scrollbar-hide">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
             {isChatActive ? (
               <ChatInterface
                 messages={messages}
+                isAiTyping={isAiTyping}
                 theme={theme}
                 currentTheme={currentTheme}
               />
