@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import { useTheme } from "../context/ThemeContext.jsx";
 import axios from "axios";
-
+import { useNavigate } from "react-router-dom";
 // Import all the new components
 import Header from "../components/Header.jsx";
 import Sidebar from "../components/Sidebar.jsx";
@@ -10,8 +10,12 @@ import ChatInterface from "../components/ChatInterface.jsx";
 import ChatInput from "../components/ChatInput.jsx";
 import LandingContent from "../components/LandingContent.jsx";
 import TitleModal from "../components/TitleModal.jsx";
+import { driver } from "driver.js";
+import "driver.js/dist/driver.css";
 
 const Home = () => {
+  const navigate = useNavigate();
+  const user = localStorage.getItem("user");
   const { theme, toggleTheme } = useTheme();
 
   const [messages, setMessages] = useState([]);
@@ -26,6 +30,77 @@ const Home = () => {
   // State for the modal
   const [isTitleModalOpen, setIsTitleModalOpen] = useState(false);
   const [newChatTitle, setNewChatTitle] = useState("");
+
+   useEffect(() => {
+    const tourHasBeenSeen = localStorage.getItem('zenith_tour_completed');
+    if (tourHasBeenSeen) {
+      return;
+    }
+
+    const driverObj = driver({
+      showProgress: true,
+      onCloseClick: () => {
+        localStorage.setItem('zenith_tour_completed', 'true');
+        driverObj.destroy();
+      },
+      // --- UPDATED TOUR STEPS ---
+      steps: [
+        {
+          element: '#sidebar-toggle-button',
+          popover: {
+            title: 'Open Your Sidebar',
+            description: 'Click "Next" to open the sidebar and see where to manage your conversations.',
+            side: "bottom",
+            align: 'start'
+          },
+
+          onNextClick: () => {
+            setIsSidebarOpen(()=>true);
+            setTimeout(() => {
+              driverObj.moveNext();
+            }, 350);
+          }
+        },
+        {
+          element: '#new-chat-button',
+          popover: {
+            title: 'Start a New Chat',
+            description: `Welcome, ${user || 'Explorer'}! Click here to begin a new conversation.`,
+            side: "right",
+            align: 'start'
+          }
+        },
+        {
+          element: '#chat-history-list',
+          popover: {
+            title: 'View Past Conversations',
+            description: 'Your previous chats are saved here.',
+            side: "right",
+            align: 'start'
+          }
+        },
+        {
+          // CHANGE 2: The theme toggle step is added back
+          element: '#theme-toggle-button',
+          popover: {
+            title: 'Customize Your View',
+            description: 'You can switch between light and dark themes.',
+            side: "bottom",
+            align: 'end'
+          }
+        },
+        {
+          popover: {
+            title: "You're All Set!",
+            description: "That's everything you need to know. Enjoy using Zenith!"
+          }
+        }
+      ]
+    });
+
+    driverObj.drive();
+    
+  }, []); 
 
   useEffect(() => {
     const fetchChats = async () => {
@@ -188,7 +263,23 @@ const Home = () => {
       console.log("Error creating chat:", error);
     }
   };
-  
+
+  const handleLogout = async () => {
+    try {
+      await axios.post(
+        "http://localhost:3000/api/auth/logout",
+        {},
+        {
+          withCredentials: true,
+        }
+      );
+      navigate("/login");
+      localStorage.removeItem('user')
+    } catch (error) {
+      console.error("Failed to log out:", error);
+    }
+  };
+
   // Cleaned up the main return statement
   return (
     <div
@@ -205,6 +296,8 @@ const Home = () => {
       />
 
       <Sidebar
+        onLogout={handleLogout}
+        user={user}
         theme={theme}
         currentTheme={currentTheme}
         chatHistory={chatHistory}
@@ -244,7 +337,7 @@ const Home = () => {
                 currentTheme={currentTheme}
               />
             ) : (
-              <LandingContent theme={theme} />
+              <LandingContent theme={theme} user={user} />
             )}
           </div>
         </main>

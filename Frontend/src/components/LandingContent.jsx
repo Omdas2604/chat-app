@@ -23,7 +23,7 @@ const LandingContent = ({ theme }) => {
   return (
     <div className="h-full flex flex-col justify-center items-center text-center px-4">
       {/* Header Content */}
-      <Logo theme={theme} className="w-16 h-16 mb-4" />
+      <Logo theme={theme} className="w-16 h-16 mb-4 animate-bounce" />
       <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-2">
         Welcome to Zenith
       </h1>

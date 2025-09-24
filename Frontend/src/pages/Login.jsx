@@ -55,7 +55,7 @@ const Login = () => {
     },{
         withCredentials:true
     }).then((res)=>{
-        console.log(res);
+      localStorage.setItem('user',res.data.user.fullName.firstName)
         navigate('/')
   }).catch((err)=>{
     console.error(err);

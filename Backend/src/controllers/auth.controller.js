@@ -73,7 +73,25 @@ async function loginUser(req,res) {
 
 }
 
+async function logoutUser(req, res) {
+    try {
+        // The primary action is to clear the 'token' cookie.
+        res.clearCookie('token');
+        
+        // Send a success response back to the client.
+        res.status(200).json({
+            message: "User logged out successfully"
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Server error during logout",
+            error: error.message
+        });
+    }
+}
+
 module.exports={
     registerUser,
-    loginUser
+    loginUser,
+    logoutUser
 }

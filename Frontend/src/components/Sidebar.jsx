@@ -3,6 +3,7 @@ import { PlusIcon, CloseIcon, UserIcon, LogoutIcon } from "./Icons.jsx";
 
 const Sidebar = ({
   theme,
+  user,
   currentTheme,
   chatHistory,
   onNewChatClick,
@@ -10,7 +11,9 @@ const Sidebar = ({
   isSidebarOpen,
   setIsSidebarOpen,
   activeChatId,
-}) => (
+  onLogout
+}) => {
+  return(
   <aside
     className={`absolute lg:fixed top-0 left-0 h-full w-72 flex-shrink-0 ${
       currentTheme.sidebarBg
@@ -30,6 +33,7 @@ const Sidebar = ({
     </div>
     <div className="p-4 flex-shrink-0">
       <button
+      id='new-chat-button'
         onClick={onNewChatClick}
         className={`w-full flex items-center gap-2 justify-center p-2 rounded-lg text-sm font-medium border transition-colors ${
           currentTheme.border
@@ -39,7 +43,9 @@ const Sidebar = ({
         New Chat
       </button>
     </div>
-    <nav className="flex-1 px-4 pb-4 space-y-2 overflow-y-auto">
+    <nav 
+    id="chat-history-list"
+    className="flex-1 px-4 pb-4 space-y-2 overflow-y-auto">
       {chatHistory.map((chat) => {
         const isActive = chat._id === activeChatId;
         return (
@@ -63,18 +69,19 @@ const Sidebar = ({
     </nav>
 
     <div className={`flex-shrink-0 p-4 border-t ${currentTheme.border}`}>
-      <a
-        href="#"
+      <button
+      onClick={onLogout}
         className={`flex items-center gap-3 p-2 rounded-lg transition-colors ${
           theme === "dark" ? "hover:bg-zinc-800" : "hover:bg-zinc-200"
         }`}
       >
         <UserIcon className="w-8 h-8 p-1.5 bg-zinc-700 text-white rounded-full" />
-        <span className="font-medium text-sm">Your Name</span>
+        <span className="font-medium text-sm">{user?user:"USER"}</span>
         <LogoutIcon className="ml-auto" />
-      </a>
+      </button>
     </div>
   </aside>
-);
+  )
+};
 
 export default Sidebar;

@@ -1,7 +1,8 @@
-import React from 'react';
+import React from "react";
+
 
 export const Logo = ({ theme, className }) => (
-  <svg
+ <svg
     width="30"
     height="30"
     viewBox="0 0 100 100"
@@ -9,20 +10,35 @@ export const Logo = ({ theme, className }) => (
     xmlns="http://www.w3.org/2000/svg"
     className={className}
   >
+    {/* Body/Head Background - changes with theme */}
     <rect
-      width="100"
-      height="100"
-      rx="20"
-      fill={theme === "dark" ? "white" : "black"}
+      x="10"
+      y="20"
+      width="80"
+      height="60"
+      rx="15"
+      fill={theme === "dark" ? "#60A5FA" : "#374151"} // Light blue for dark, dark gray for light theme
     />
-    <path
-      d="M25 35 H75 M25 65 H75 M40 50 L60 50"
-      stroke={theme === "dark" ? "black" : "white"}
-      strokeWidth="8"
-      strokeLinecap="square"
-      strokeLinejoin="miter"
+
+    {/* Eyes - always contrasting or a highlight color */}
+    <circle cx="38" cy="45" r="8" fill={theme === "dark" ? "#D1FAE5" : "#6EE7B7"} /> {/* Bright light green */}
+    <circle cx="62" cy="45" r="8" fill={theme === "dark" ? "#D1FAE5" : "#6EE7B7"} />
+
+    {/* Mouth/Processor Indicator */}
+    <rect
+      x="35"
+      y="60"
+      width="30"
+      height="8"
+      rx="4"
+      fill={theme === "dark" ? "#93C5FD" : "#4B5563"} // Slightly lighter/darker
     />
+
+    {/* Antenna/Processor Accent (Optional) */}
+    <rect x="45" y="10" width="10" height="15" rx="3" fill={theme === "dark" ? "#E0F2FE" : "#9CA3AF"} />
+    <circle cx="50" cy="10" r="5" fill={theme === "dark" ? "#E0F2FE" : "#9CA3AF"} />
   </svg>
+
 );
 
 export const SendIcon = () => (
@@ -195,9 +211,6 @@ export const CloseIcon = () => (
   </svg>
 );
 
-// In Icons.jsx
-
-// (keep your existing icons like PlusIcon, etc.)
 
 export const HistoryIcon = () => (
   <svg
@@ -234,3 +247,4 @@ export const TypeIcon = () => (
     <path d="M12 4v16" />
   </svg>
 );
+
