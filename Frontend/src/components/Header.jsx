@@ -1,6 +1,7 @@
 import React from "react";
 import { MenuIcon, SunIcon, MoonIcon } from "./Icons.jsx";
 
+
 const Header = ({ theme, toggleTheme, setIsSidebarOpen }) => (
   <header className="flex-shrink-0 flex justify-between items-center p-4">
     <div className="flex items-center gap-3">

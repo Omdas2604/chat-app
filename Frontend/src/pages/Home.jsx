@@ -31,8 +31,8 @@ const Home = () => {
   const [isTitleModalOpen, setIsTitleModalOpen] = useState(false);
   const [newChatTitle, setNewChatTitle] = useState("");
 
-   useEffect(() => {
-    const tourHasBeenSeen = localStorage.getItem('zenith_tour_completed');
+  useEffect(() => {
+    const tourHasBeenSeen = localStorage.getItem("zenith_tour_completed");
     if (tourHasBeenSeen) {
       return;
     }
@@ -40,67 +40,88 @@ const Home = () => {
     const driverObj = driver({
       showProgress: true,
       onCloseClick: () => {
-        localStorage.setItem('zenith_tour_completed', 'true');
+        localStorage.setItem("zenith_tour_completed", "true");
         driverObj.destroy();
       },
-      // --- UPDATED TOUR STEPS ---
+      onDestroyed: () => {
+        localStorage.setItem("zenith_tour_completed", "true");
+      },
       steps: [
         {
-          element: '#sidebar-toggle-button',
+          element: "#sidebar-toggle-button",
           popover: {
-            title: 'Open Your Sidebar',
-            description: 'Click "Next" to open the sidebar and see where to manage your conversations.',
+            title: "Open Your Sidebar",
+            description:
+              'Click "Next" to open the sidebar and see where to manage your conversations.',
             side: "bottom",
-            align: 'start'
-          },
-
-          onNextClick: () => {
-            setIsSidebarOpen(()=>true);
-            setTimeout(() => {
+            align: "start",
+            onNextClick: () => {
+              console.log("hh");
+              setIsSidebarOpen((prev) => !prev);
               driverObj.moveNext();
-            }, 350);
-          }
+            },
+          },
         },
         {
-          element: '#new-chat-button',
+          element: "#new-chat-button",
           popover: {
-            title: 'Start a New Chat',
-            description: `Welcome, ${user || 'Explorer'}! Click here to begin a new conversation.`,
+            title: "Start a New Chat",
+            description: `Welcome, ${
+              user || "Explorer"
+            }! Click here to begin a new conversation.`,
             side: "right",
-            align: 'start'
-          }
+            align: "start",
+          },
         },
         {
-          element: '#chat-history-list',
+          element: "#chat-history-list",
           popover: {
-            title: 'View Past Conversations',
-            description: 'Your previous chats are saved here.',
+            title: "View Past Conversations",
+            description: "Your previous chats are saved here.",
             side: "right",
-            align: 'start'
-          }
+            align: "start",
+          },
         },
         {
           // CHANGE 2: The theme toggle step is added back
-          element: '#theme-toggle-button',
+          element: "#theme-toggle-button",
           popover: {
-            title: 'Customize Your View',
-            description: 'You can switch between light and dark themes.',
+            title: "Customize Your View",
+            description: "You can switch between light and dark themes.",
             side: "bottom",
-            align: 'end'
-          }
+            align: "end",
+          },
         },
         {
           popover: {
             title: "You're All Set!",
-            description: "That's everything you need to know. Enjoy using Zenith!"
+            description:
+              "That's everything you need to know. Enjoy using Zenith!",
+          },
+          onNextClick:()=>{
+            localStorage.setItem('zenith_tour_completed','true')
           }
-        }
-      ]
+        },
+      ],
     });
 
     driverObj.drive();
-    
-  }, []); 
+
+    const handleClickOutside = (e) => {
+      const popover = document.querySelector(".driver-popover");
+      if (popover && !popover.contains(e.target)) {
+        localStorage.setItem("zenith_tour_completed", "true");
+        driverObj.destroy();
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+      driverObj.destroy();
+    };
+  }, [user]);
 
   useEffect(() => {
     const fetchChats = async () => {
@@ -140,7 +161,7 @@ const Home = () => {
       setIsAiTyping(false);
 
       const newMessage = {
-        id: Date.now() + Math.random(), // Simple unique ID generation
+        id: Date.now() + Math.random(),
         sender: "ai",
         text: messagePayload.content,
       };
@@ -274,7 +295,8 @@ const Home = () => {
         }
       );
       navigate("/login");
-      localStorage.removeItem('user')
+      localStorage.removeItem("user");
+      localStorage.removeItem("zenith_tour_completed");
     } catch (error) {
       console.error("Failed to log out:", error);
     }
