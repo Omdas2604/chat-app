@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useTheme } from "../hooks/useTheme";
 import React, { useState } from "react";
 import axios from "axios";
@@ -80,8 +80,8 @@ const Register = () => {
           withCredentials: true,
         }
       )
-      .then((res) => {
-        console.log(res);
+      .then(() => {
+        localStorage.setItem('isNewUser', 'true');
         navigate("/login");
       })
       .catch((err) => {
@@ -235,12 +235,12 @@ const Register = () => {
 
           <p className={`text-center text-sm ${currentTheme.textMuted}`}>
             Already have an account?{" "}
-            <a
-              href="#"
+            <Link
+              to="/login"
               className={`font-semibold hover:underline ${currentTheme.accent}`}
             >
               Sign In
-            </a>
+            </Link>
           </p>
         </div>
       </ElectricBorder>

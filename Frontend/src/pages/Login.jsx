@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useTheme } from "../context/ThemeContext";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ElectricBorder from "../components/ElectricBorder";
 
 
@@ -82,9 +82,11 @@ const Login = () => {
               </div>
               <nav className="flex items-center gap-2 sm:gap-4">
                 {/* Responsive button padding */}
-                <button className={`px-3 sm:px-5 py-2 text-sm font-medium rounded-full transition-colors duration-300 ${currentTheme.btnBg} ${currentTheme.btnText} ${currentTheme.btnHover}`}>
+                <Link 
+                to="/register"
+                className={`px-3 sm:px-5 py-2 text-sm font-medium rounded-full transition-colors duration-300 ${currentTheme.btnBg} ${currentTheme.btnText} ${currentTheme.btnHover}`}>
                   Sign Up
-                </button>
+                </Link>
                 <button onClick={toggleTheme} className={`p-2 rounded-full transition-all duration-300 ${theme === 'dark' ? 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
                   <span className="sr-only">Toggle theme</span>
                   {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
